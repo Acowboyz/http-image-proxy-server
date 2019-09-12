@@ -1,1 +1,1 @@
-# http-proxy-image-server
+# http-image-proxy-server
