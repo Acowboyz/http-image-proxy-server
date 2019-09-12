@@ -11,3 +11,8 @@
 
 4. optimize the query per second of web server
     - gunicorn, gevent
+    
+
+### TODO
+
+- unit test, function documentation, nginx, docker
