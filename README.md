@@ -1,5 +1,7 @@
 # http-image-proxy-server
 
+[![Build Status](https://travis-ci.org/Acowboyz/image-resizer.svg?branch=master)](https://travis-ci.org/Acowboyz/image-resizer)
+
 1. return http status code 404 and emtpy page when APIs are not found.
     - flask
 
