@@ -14,6 +14,8 @@ python-resize-image = "*"
 flask-sqlalchemy = "*"
 gunicorn = "*"
 gevent = "*"
+aiohttp = "*"
+aiohttp-wsgi = "*"
 
 [requires]
 python_version = "3.7"

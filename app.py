@@ -1,14 +1,37 @@
+import os
+
 from flask import Flask
-from flask import g
 from flask import jsonify
 from flask import render_template
 from flask import request
 from flask import send_file
+from flask_sqlalchemy import SQLAlchemy
+from flask import g
 
 from db import update_db, query_db
 from image_processing import image_processing
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# configuration
+DATABASE = 'data.db'
+DEBUG = False
+
+# define the full path for the database
+DATABASE_PATH = os.path.join(basedir, DATABASE)
+
+# database config
+SQLALCHEMY_DATABASE_URI = f'sqlite:///{DATABASE_PATH}'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# create app
+
 app = Flask(__name__)
+app.config.from_object(__name__)
+
+db = SQLAlchemy(app)
+
+import models
 
 
 @app.teardown_appcontext
@@ -30,9 +53,12 @@ def page_not_found(e):
 
 @app.route('/proxy', methods=['GET'])
 def proxy():
-    query = 'UPDATE apicounter SET count = count + 1 WHERE api_name = ?'
-    args = ('proxy',)
-    update_db(query, args)
+    db.session.query(models.APICounter.count).filter_by(api_name='proxy').update({'count': models.APICounter.count + 1})
+
+    db.session.commit()
+    # query = 'UPDATE apicounter SET count = count + 1 WHERE api_name = ?'
+    # args = ('proxy',)
+    # update_db(query, args)
 
     if 'url' not in request.args:
         return render_template('empty.html'), 200
@@ -49,14 +75,15 @@ def proxy():
 
 @app.route('/admin', methods=['GET'])
 def admin():
-    query = 'SELECT count FROM apicounter WHERE api_name = ?'
-    args = ('proxy',)
-    proxy_query_count = query_db(query, args, one=True)
+    count = db.session.query(models.APICounter.count).filter_by(api_name='proxy').first()
+    # query = 'SELECT count FROM apicounter WHERE api_name = ?'
+    # args = ('proxy',)
+    # proxy_query_count = query_db(query, args, one=True)
 
     return jsonify({
-        'query_count': proxy_query_count
+        'query_count': count
     })
 
 
 if __name__ == '__main__':
-    app.run(processes=3, threaded=False)
+    app.run()
