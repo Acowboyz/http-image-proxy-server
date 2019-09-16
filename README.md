@@ -20,4 +20,4 @@
 
 ### TODO
 
-- function documentation, nginx, docker
+- function documentation, nginx, docker, redis
